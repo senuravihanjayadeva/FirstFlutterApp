@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:video_player_app/video_info.dart';
 import 'colors.dart' as color;
 
 class HomePage extends StatefulWidget {
@@ -10,6 +14,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List info = [];
+  _initData() {
+    DefaultAssetBundle.of(context)
+        .loadString("json/info.json")
+        .then((value) => info = json.decode(value));
+  }
+
+  @override
+  void initState() {
+    //TODO: implement initState
+    super.initState();
+    _initData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,10 +83,15 @@ class _HomePageState extends State<HomePage> {
                         color: color.AppColor.homePageDetail,
                         fontWeight: FontWeight.w700),
                   ),
-                  Icon(
-                    Icons.arrow_forward,
-                    size: 20,
-                    color: color.AppColor.homePageIcons,
+                  InkWell(
+                    onTap: () {
+                      Get.to(() => VideoInfo());
+                    },
+                    child: Icon(
+                      Icons.arrow_forward,
+                      size: 20,
+                      color: color.AppColor.homePageIcons,
+                    ),
                   )
                 ],
               ),
@@ -76,6 +99,7 @@ class _HomePageState extends State<HomePage> {
                 height: 20,
               ),
               Container(
+                padding: const EdgeInsets.only(left: 20, top: 25, right: 20),
                 width: MediaQuery.of(context).size.width,
                 height: 220,
                 decoration: BoxDecoration(
@@ -96,6 +120,7 @@ class _HomePageState extends State<HomePage> {
                           color: color.AppColor.gradientSecond.withOpacity(0.2))
                     ]),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "Next Workout",
@@ -103,9 +128,176 @@ class _HomePageState extends State<HomePage> {
                           fontSize: 16,
                           color: color.AppColor.homePageContainerTextSmall),
                     ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      "Legs Toning",
+                      style: TextStyle(
+                          fontSize: 25,
+                          color: color.AppColor.homePageContainerTextSmall),
+                    ),
+                    SizedBox(
+                      height: 2,
+                    ),
+                    Text(
+                      "and Gluter Workout",
+                      style: TextStyle(
+                          fontSize: 25,
+                          color: color.AppColor.homePageContainerTextSmall),
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.timer,
+                              size: 20,
+                              color: color.AppColor.homePageContainerTextSmall,
+                            ),
+                            Text(
+                              "60 min",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: color
+                                      .AppColor.homePageContainerTextSmall),
+                            ),
+                          ],
+                        ),
+                        Expanded(child: Container()),
+                        Icon(
+                          Icons.play_circle_fill,
+                          size: 60,
+                          color: color.AppColor.homePageContainerTextSmall,
+                        ),
+                      ],
+                    )
                   ],
                 ),
-              )
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Container(
+                height: 180,
+                width: MediaQuery.of(context).size.width,
+                child: Stack(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      margin: const EdgeInsets.only(top: 30),
+                      height: 120,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                                blurRadius: 40,
+                                offset: Offset(8, 10),
+                                color: color.AppColor.gradientSecond
+                                    .withOpacity(0.3)),
+                            BoxShadow(
+                                blurRadius: 10,
+                                offset: Offset(-1, -5),
+                                color: color.AppColor.gradientSecond
+                                    .withOpacity(0.3))
+                          ],
+                          image: DecorationImage(
+                              image: AssetImage("assets/card.jpg"),
+                              fit: BoxFit.fill)),
+                    ),
+                    Container(
+                        height: 200,
+                        width: MediaQuery.of(context).size.width,
+                        margin: const EdgeInsets.only(
+                            right: 200, bottom: 30, top: 10),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            image: DecorationImage(
+                                image: AssetImage("assets/figure.png"),
+                                fit: BoxFit.fill))),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 100,
+                      margin: const EdgeInsets.only(left: 150, top: 50),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "You are doing greate",
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: color.AppColor.homePageDetail),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            "Keep it up",
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: color.AppColor.homePagePlanColor),
+                          ),
+                          Text(
+                            "Stick to your plan",
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: color.AppColor.homePagePlanColor),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Row(
+                children: [
+                  Text(
+                    "Area of focus",
+                    style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w500,
+                        color: color.AppColor.homePageTitle),
+                  )
+                ],
+              ),
+              Expanded(
+                  child: ListView.builder(
+                      itemCount: info.length,
+                      itemBuilder: (_, i) {
+                        return Row(
+                          children: [
+                            Container(
+                              height: 170,
+                              width: 200,
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15),
+                                  image: DecorationImage(
+                                      image: AssetImage(info[i]['img'])),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        blurRadius: 3,
+                                        offset: Offset(-5, -5),
+                                        color: color.AppColor.gradientSecond
+                                            .withOpacity(0.1)),
+                                  ]),
+                              child: Center(
+                                child: Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Text(
+                                      "Title",
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: color.AppColor.homePageDetail),
+                                    )),
+                              ),
+                            )
+                          ],
+                        );
+                      }))
             ],
           ),
         ));
