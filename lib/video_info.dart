@@ -204,7 +204,58 @@ class _VideoInfoState extends State<VideoInfo> {
                         ],
                       )
                     ],
-                  )
+                  ),
+                  Expanded(
+                      child: ListView.builder(
+                    itemCount: 6,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        height: 100,
+                        width: MediaQuery.of(context).size.width,
+                        margin: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.only(right: 30),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.grey.shade100),
+                        child: Row(
+                          children: [
+                            Container(
+                              height: MediaQuery.of(context).size.height,
+                              decoration: BoxDecoration(color: Colors.red),
+                              child: Image(
+                                  image: AssetImage("assets/squat1.jpg"),
+                                  fit: BoxFit.fill),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(top: 20, left: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Squat and Walk",
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "45 seconds",
+                                    style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ))
                 ],
               ),
             ))

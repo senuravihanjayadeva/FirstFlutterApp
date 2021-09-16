@@ -31,8 +31,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: color.AppColor.homePageBackground,
-        body: Container(
+        body: SingleChildScrollView(
+            child: Container(
           padding: const EdgeInsets.only(top: 70, left: 30, right: 30),
           child: Column(
             children: [
@@ -262,44 +264,41 @@ class _HomePageState extends State<HomePage> {
                   )
                 ],
               ),
-              Expanded(
-                  child: ListView.builder(
-                      itemCount: info.length,
-                      itemBuilder: (_, i) {
-                        return Row(
-                          children: [
-                            Container(
-                              height: 170,
-                              width: 200,
-                              padding: const EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15),
-                                  image: DecorationImage(
-                                      image: AssetImage(info[i]['img'])),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        blurRadius: 3,
-                                        offset: Offset(-5, -5),
-                                        color: color.AppColor.gradientSecond
-                                            .withOpacity(0.1)),
-                                  ]),
-                              child: Center(
-                                child: Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Text(
-                                      "Title",
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          color: color.AppColor.homePageDetail),
-                                    )),
+              Container(
+                  height: 300,
+                  child: GridView.count(
+                    // Create a grid with 2 columns. If you change the scrollDirection to
+                    // horizontal, this produces 2 rows.
+                    crossAxisCount: 2,
+                    // Generate 100 widgets that display their index in the List.
+                    children: List.generate(4, (index) {
+                      return Center(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            children: [
+                              Image(image: AssetImage("assets/ex3.png")),
+                              SizedBox(
+                                height: 10,
                               ),
-                            )
-                          ],
-                        );
-                      }))
+                              Text(
+                                "Exercise 1",
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: color.AppColor.homePageDetail,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ))
             ],
           ),
-        ));
+        )));
   }
 }
