@@ -4,7 +4,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:video_player_app/home_page.dart';
+import 'package:video_player_app/models/SampleModel.dart';
 import 'colors.dart' as color;
+import 'package:http/http.dart' as http;
+
+List<Photo> parsePhotos(String responseBody) {
+  final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
+
+  return parsed.map<Photo>((json) => Photo.fromJson(json)).toList();
+}
+
+Future<List<Photo>> fetchPhotos(http.Client client) async {
+  final response = await client
+      .get(Uri.parse('https://jsonplaceholder.typicode.com/photos'));
+
+  // Use the compute function to run parsePhotos in a separate isolate.
+  return parsePhotos(response.body);
+}
 
 class VideoInfo extends StatefulWidget {
   const VideoInfo({Key? key}) : super(key: key);
@@ -14,20 +30,6 @@ class VideoInfo extends StatefulWidget {
 }
 
 class _VideoInfoState extends State<VideoInfo> {
-  List info = [];
-  _initData() {
-    DefaultAssetBundle.of(context)
-        .loadString("json/videoinfo.json")
-        .then((value) => info = json.decode(value));
-  }
-
-  @override
-  void initState() {
-    //TODO: implement initState
-    super.initState();
-    _initData();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -206,54 +208,68 @@ class _VideoInfoState extends State<VideoInfo> {
                     ],
                   ),
                   Expanded(
-                      child: ListView.builder(
-                    itemCount: 6,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        height: 100,
-                        width: MediaQuery.of(context).size.width,
-                        margin: const EdgeInsets.all(10),
-                        padding: const EdgeInsets.only(right: 30),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.grey.shade100),
-                        child: Row(
-                          children: [
-                            Container(
-                              height: MediaQuery.of(context).size.height,
-                              decoration: BoxDecoration(color: Colors.red),
-                              child: Image(
-                                  image: AssetImage("assets/squat1.jpg"),
-                                  fit: BoxFit.fill),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.only(top: 20, left: 10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                      child: FutureBuilder<List<Photo>>(
+                    future: fetchPhotos(http.Client()),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return Container(
+                          child: Text("Loading"),
+                        );
+                      } else
+                        return ListView.builder(
+                          itemCount: 6,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
+                              height: 100,
+                              width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.all(10),
+                              padding: const EdgeInsets.only(right: 30),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.grey.shade100),
+                              child: Row(
                                 children: [
-                                  Text(
-                                    "Squat and Walk",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black),
+                                  Container(
+                                    height: MediaQuery.of(context).size.height,
+                                    decoration:
+                                        BoxDecoration(color: Colors.red),
+                                    child: Image(
+                                        image: AssetImage("assets/squat1.jpg"),
+                                        fit: BoxFit.fill),
                                   ),
-                                  SizedBox(
-                                    height: 10,
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                        top: 20, left: 10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          snapshot.data![index].title
+                                              .substring(0, 20),
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black),
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          "45 seconds",
+                                          style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey),
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                  Text(
-                                    "45 seconds",
-                                    style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey),
-                                  )
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                      );
+                            );
+                          },
+                        );
                     },
                   ))
                 ],
